@@ -1,4 +1,4 @@
-use std::fs;
+use std::{collections::HashMap, fs};
 
 fn main() {
     let file_path = "input.txt";
@@ -24,22 +24,33 @@ fn main() {
     left.sort_by(|a, b| b.cmp(a));
     right.sort_by(|a, b| b.cmp(a));
 
-    let mut sum = 0;
-    while !left.is_empty() && !right.is_empty() {
-        let l = match left.pop().expect("failed").parse::<i32>() {
-            Ok(number) => number,
-            Err(_) => {
-                panic!("FAILED to parse str");
-            }
-        };
-        let r = match right.pop().expect("failed").parse::<i32>() {
-            Ok(number) => number,
-            Err(_) => {
-                panic!("FAILED to parse str");
-            }
-        };
+    // let mut sum = 0;
+    // while !left.is_empty() && !right.is_empty() {
+    //     let l = match left.pop().expect("failed").parse::<i32>() {
+    //         Ok(number) => number,
+    //         Err(_) => {
+    //             panic!("FAILED to parse str");
+    //         }
+    //     };
+    //     let r = match right.pop().expect("failed").parse::<i32>() {
+    //         Ok(number) => number,
+    //         Err(_) => {
+    //             panic!("FAILED to parse str");
+    //         }
+    //     };
+    //
+    //     sum += (r - l).abs();
+    // }
+    //
+    let mut counts = HashMap::new();
 
-        sum += (r - l).abs();
+    for &val in &right {
+        *counts.entry(val).or_insert(0) += 1;
+    }
+
+    let mut sum = 0;
+    for &val in &left {
+        sum += val.parse::<i32>().unwrap() * *counts.entry(val).or_insert(0);
     }
 
     println!("Success ✅: answer is {}", sum);
