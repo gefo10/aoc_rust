@@ -7,7 +7,7 @@ struct Position {
 
 pub type Direction = (isize, isize);
 
-static WORD: &str = "XMAS";
+static WORD: &str = "MAS";
 
 fn main() {
     let content = fs::read_to_string("input.txt").expect("Failed to read file");
@@ -36,19 +36,31 @@ fn main() {
     let word_chars: Vec<char> = WORD.chars().collect();
     let word_chars_rev: Vec<char> = word_chars.iter().cloned().rev().collect();
 
-    for i in 0..rows {
-        for j in 0..cols {
-            if chars[i][j] == word_chars[0] || chars[i][j] == word_chars_rev[0] {
-                for &dir in &dirs {
-                    if check_word(&chars, &word_chars, i, j, dir) {
-                        count += 1;
-                        positions.push((Position { x: j, y: i }, dir));
-                    }
+    // Look for 'A' as the center of the X
+    for i in 1..rows - 1 {
+        // Skip edges since we need neighbors
+        for j in 1..cols - 1 {
+            if chars[i][j] == 'A' {
+                if is_xmas_pattern(&chars, i, j) {
+                    count += 1;
                 }
             }
         }
     }
 
+    // for i in 0..rows {
+    //     for j in 0..cols {
+    //         if chars[i][j] == word_chars[0] || chars[i][j] == word_chars_rev[0] {
+    //             for &dir in &dirs {
+    //                 if check_word(&chars, &word_chars, i, j, dir) {
+    //                     count += 1;
+    //                     positions.push((Position { x: j, y: i }, dir));
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    //
     println!("Total occurrences of '{}': {}", WORD, count);
 }
 
@@ -77,4 +89,24 @@ fn check_word(
     }
 
     true
+}
+
+fn is_xmas_pattern(chars: &Vec<Vec<char>>, i: usize, j: usize) -> bool {
+    // Check both diagonals
+    // Diagonal 1: top-left to bottom-right
+    let diag1_tl = chars[i - 1][j - 1]; // top-left
+    let diag1_br = chars[i + 1][j + 1]; // bottom-right
+
+    // Diagonal 2: top-right to bottom-left
+    let diag2_tr = chars[i - 1][j + 1]; // top-right
+    let diag2_bl = chars[i + 1][j - 1]; // bottom-left
+
+    // Check if diagonal 1 is "MAS" or "SAM"
+    let diag1_valid = (diag1_tl == 'M' && diag1_br == 'S') || (diag1_tl == 'S' && diag1_br == 'M');
+
+    // Check if diagonal 2 is "MAS" or "SAM"
+    let diag2_valid = (diag2_tr == 'M' && diag2_bl == 'S') || (diag2_tr == 'S' && diag2_bl == 'M');
+
+    // Both diagonals must be valid
+    diag1_valid && diag2_valid
 }
