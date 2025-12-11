@@ -1,0 +1,53 @@
+use std::fs;
+
+#[derive(Debug)]
+struct Point {
+    x: i64,
+    y: i64,
+    z: i64,
+}
+
+#[derive(Debug)]
+struct Edge {
+    u: usize,
+    v: usize,
+    dist: i64,
+}
+impl Point {
+    fn dist_eq(&self, other: &Point) -> i64 {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        let dz = self.z - other.z;
+
+        dx * dx + dy * dy + dz * dz
+    }
+}
+fn solve(content: &str) -> i64 {
+    let points: Vec<Point> = content
+        .lines()
+        .map(|line| {
+            let mut parts = line.split(",");
+
+            let x = parts.next().ok_or("missing x").unwrap().parse().unwrap();
+            let y = parts.next().ok_or("missing y").unwrap().parse().unwrap();
+            let z = parts.next().ok_or("missing z").unwrap().parse().unwrap();
+
+            Point { x, y, z }
+        })
+        .collect();
+
+    let mut edges: Vec<Edge> = Vec::new();
+}
+
+fn main() {
+    let content = fs::read_to_string("input.txt").unwrap();
+    let content_test = fs::read_to_string("text.txt").unwrap();
+
+    let res = solve(&content);
+    let res_test = solve(&content_test);
+
+    println!("Result (test): {}", res_test);
+    assert!(res_test == 40);
+
+    println!("Result: {}", res);
+}
